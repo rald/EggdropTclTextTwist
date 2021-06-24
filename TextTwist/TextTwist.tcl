@@ -23,14 +23,14 @@ set allocated_time 180
 set utimerid ""
 
 
-bind pubm -|- * guess_word
+bind pubm -|- * guess_word  
 
-bind pub -|- ".start" start_game
-bind pub -|- ".twist" twist_word
-bind pub -|- ".list" print_list
-bind pub -|- ".left" print_left
-bind pub -|- ".score" print_score
-bind pub -|- ".top" print_top
+bind pub -|- ".start" start_game  
+bind pub -|- ".twist" twist_word  
+bind pub -|- ".list" print_list  
+bind pub -|- ".left" print_left  
+bind pub -|- ".score" print_score  
+bind pub -|- ".top" print_top  
 
 
 
@@ -256,19 +256,19 @@ proc print_score {nick uhost handle chan text} {
 			putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, your score is 0."
 		}
 	} elseif {[info exists players($text)]} {
-		putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, $text's score is $players($text)."	
+		putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, $text's score is $players($text)."
 	} else {
-		putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, $text's score is 0."	
-	} 
+		putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, $text's score is 0."
+	}
 }
 
 
 
 proc print_top {nick uhost handle chan text} {
 	global players
-	
+
 	load_scores
-	
+
 	set top [lsort -decreasing -integer -stride 2 -index 1 [array get players]]
 
 	set n [expr {int([llength $top] / 2)}]
@@ -276,19 +276,15 @@ proc print_top {nick uhost handle chan text} {
 		set n 10
 	}
 
-	if {$n > 0} {
-		set output ""
-		for {set i 0} {$i < $n} {incr i} {
-			if {$i != 0} {
-				append output ", "
-			}
-			append output "[expr {$i+1}]. [lindex $top [expr {$i*2}]] [lindex $top [expr {$i*2+1}]]"
+	set output ""
+	for {set i 0} {$i < $n} {incr i} {
+		if {$i != 0} {
+			append output ", "
 		}
-
-		putserv "PRIVMSG $chan :\[TEXTTWIST\] $output"	
-	} else {
-		putserv "PRIVMSG $chan :\[TEXTTWIST\] No top scorer"			
+		append output "[expr {$i+1}]. [lindex $top [expr {$i*2}]] [lindex $top [expr {$i*2+1}]]"
 	}
+
+	putserv "PRIVMSG $chan :\[TEXTTWIST\] $output"
 }
 
 
@@ -312,7 +308,7 @@ proc guess_word {nick uhost handle chan text} {
 					putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, the word '$w' is already guessed." 
 				} else {
 					lset guessed $i 1
-					incr num_guessed 
+					incr num_guessed
 
 					set points 0
 					set bonus ""
@@ -320,30 +316,30 @@ proc guess_word {nick uhost handle chan text} {
 					if {[string compare -nocase $text $secret_word]==0} {
 						incr points 100
 						append bonus " Secret Word Bonus! "
-					} 
-				
+					}
+
 					if {[string length $text] == [string length $word]} {
 						incr points 100
 						append bonus " Long Word Bonus! "
-					} 
-				
+					}
+
 					if {$num_guessed == [llength $anagrams]} {
 						incr points 100
 						append bonus " Last Word Bonus! "
-					} 
+					}
 
 					incr points [string length $w]
 
 					if {[info exists players($nick)]} {
-						incr players($nick) $points 
+						incr players($nick) $points
 					} else {
 						set players($nick) $points
 					}
 
 					save_scores
 
-					putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, guessed '$w' plus $points points. $bonus" 
-					
+					putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, guessed '$w' plus $points points. $bonus"
+
 					break
 				}
 			}
@@ -354,7 +350,7 @@ proc guess_word {nick uhost handle chan text} {
 			killutimer $utimerid
 			putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick finished the game!"
 			putserv "PRIVMSG $chan :\[TEXTTWIST\] [get_list 1]"
-			putserv "PRIVMSG $chan :\[TEXTTWIST\] Game Over"		
+			putserv "PRIVMSG $chan :\[TEXTTWIST\] Game Over"
 		}
 
 	}
@@ -376,7 +372,7 @@ proc time_up {nick uhost handle chan text} {
 
 proc start_game {nick uhost handle chan text} {
 	global WORDLIST_FILE WORDRAND_FILE SCORE_FILE
-	global wordlist wordrand	
+	global wordlist wordrand
 	global word
 	global shuffled_word
 	global anagrams
@@ -429,7 +425,3 @@ proc start_game {nick uhost handle chan text} {
 		putserv "PRIVMSG $chan :\[TEXTTWIST\] $nick, game is running."
 	}
 }
-
-
-
-
